@@ -16,26 +16,26 @@ public class DatabaseSeeder {
     @Bean
     CommandLineRunner initDatabase(ManagerRepository managerRepo, VendorRepository vendorRepo, PurchaseOrderRepository poRepo) {
         return args -> {
-            // 1. Create a Manager
-            Manager techLead = new Manager();
-            techLead.setName("Mateen Qureshi");
-            techLead.setDepartment("Engineering");
-            techLead.setSlackId("U12345678"); // Fake Slack ID for now
-            managerRepo.save(techLead);
+            // Safety check: Only inject if the cabinet is completely empty
+            if (poRepo.count() == 0) {
+                Manager techLead = new Manager();
+                techLead.setName("Mateen Qureshi");
+                managerRepo.save(techLead);
 
-            // 2. Create a Vendor
-            Vendor dell = new Vendor();
-            dell.setName("Dell Technologies");
-            vendorRepo.save(dell);
+                Vendor dell = new Vendor();
+                dell.setName("Dell Technologies");
+                vendorRepo.save(dell);
 
-            // 3. Create a Purchase Order linked to both
-            PurchaseOrder po = new PurchaseOrder();
-            po.setPoNumber("PO-98765");
-            po.setTotalAmount(2500.00);
-            po.setStatus("PENDING_DELIVERY");
-            po.setManager(techLead);
-            po.setVendor(dell);
-            poRepo.save(po);
+                // Generate 50 unique Purchase Orders (PO-1001 to PO-1050)
+                for (int i = 1; i <= 50; i++) {
+                    PurchaseOrder po = new PurchaseOrder();
+                    po.setPoNumber("PO-" + (1000 + i));
+                    po.setTotalAmount(1000.00); // All POs have a true value of $1,000
+                    po.setManager(techLead);
+                    po.setVendor(dell);
+                    poRepo.save(po);
+                }
+            }
         };
     }
 }
