@@ -15,7 +15,8 @@ public class InvoiceRoutingService {
     private PurchaseOrderRepository poRepository;
 
     public String processInvoice(IncomingInvoiceDto incomingInvoice) {
-        Optional poOptional = poRepository.findByPoNumber(incomingInvoice.getPoNumber());
+        Optional<PurchaseOrder> poOptional = poRepository.findByPoNumber(incomingInvoice.getPoNumber());
+
 
         if (poOptional.isEmpty()) {
             return "FALLBACK: PO Number " + incomingInvoice.getPoNumber() + " not found. Sending to Exceptions Queue.";
